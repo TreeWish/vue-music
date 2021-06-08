@@ -13,7 +13,7 @@ export default function useScroll(wrapperRef, options, emit) {
       observeDOM: true,
       ...options
     })
-
+    // 当probeType大于0时，会实时监测滚动时间
     if (options.probeType > 0) {
       scrollVal.on('scroll', (pos) => {
         emit('scroll', pos)

@@ -3,7 +3,7 @@ import Recommend from '../views/recommend.vue'
 import Singer from '../views/singer.vue'
 import Search from '../views/search.vue'
 import topList from '../views/top-list.vue'
-
+import SingerDetail from '@/views/singer-detail.vue'
 const routes = [
   {
     path: '/',
@@ -17,8 +17,15 @@ const routes = [
   },
   {
     path: '/singer',
-    name: 'singer',
-    component: Singer
+    name: 'Singer',
+    component: Singer,
+    children: [
+      {
+        path: ':id',
+        name: 'singer-detail',
+        component: SingerDetail
+      }
+    ]
   },
   {
     path: '/search',
@@ -30,6 +37,11 @@ const routes = [
     name: 'top-list',
     component: topList
   }
+  // {
+  //   path: '/singer/:id',
+  //   name: 'singer-detail',
+  //   component: SingerDetail
+  // }
 ]
 
 const router = createRouter({
