@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import storage from 'good-storage'
+import { SINGER_KEY } from '@/assets/js/constant'
 import { getSingerDetail } from '@/service/singer'
 import { processSongs } from '@/service/song'
 import MusicList from '@/components/base/music-list/music-list'
@@ -28,16 +30,39 @@ export default {
     }
   },
   async created() {
-    const result = await getSingerDetail(this.singer)
+    const singer = this.computedSinger
+    if (!singer) {
+      const path = this.$route.matched[0].path
+      this.$router.push({
+        path
+      })
+      return
+    }
+    const result = await getSingerDetail(singer)
     this.songs = await processSongs(result.songs)
     this.loading = false
   },
   computed: {
+    computedSinger() {
+      let result = null
+      const singer = this.singer
+      if (singer) {
+        result = singer
+      } else {
+        const cacheSinger = storage.session.get(SINGER_KEY)
+        if (cacheSinger && cacheSinger.mid === this.$route.params.id) {
+          result = cacheSinger
+        }
+      }
+      return result
+    },
     title() {
-      return this.singer && this.singer.name
+      const singer = this.computedSinger
+      return singer && singer.name
     },
     pic() {
-      return this.singer && this.singer.pic
+      const singer = this.computedSinger
+      return singer && singer.pic
     }
   }
 }

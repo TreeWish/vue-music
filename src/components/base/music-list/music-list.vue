@@ -14,6 +14,8 @@
     >
       <div
         class="play-btn-wrapper"
+        :style="romdomBtnStyle"
+        @click="randomPlayMusic"
       >
         <div
           v-show="songs.length > 0"
@@ -33,12 +35,14 @@
       v-loading="loading"
       :probe-type="3"
       @scroll="onScroll"
+      v-no-result:[noResultMessage]="noResult"
       :style="scrollStyle"
     >
       <div class="song-list-wrapper">
         <song-list
           :songs="songs"
           :rank="rank"
+          @select="selectItem"
         ></song-list>
       </div>
     </scroll>
@@ -48,6 +52,7 @@
 <script>
 import SongList from '@/components/base/song-list/song-list'
 import Scroll from '@/components/base/scroll/scroll'
+import { mapActions } from 'vuex'
 const NAVBAR_HEIGHT = 40
 export default {
   name: 'music-list',
@@ -70,6 +75,10 @@ export default {
     },
     loading: {
       type: Boolean
+    },
+    noResultMessage: {
+      type: String,
+      default: '抱歉，没有找到结果!'
     }
   },
   data() {
@@ -80,6 +89,10 @@ export default {
     }
   },
   computed: {
+    noResult() {
+      return !this.loading && !this.songs.length
+    },
+    // 根据背景图片大小，动态调整歌曲列表高度
     bgStyle() {
       let zIndex = 0
       let paddingTop = '70%'
@@ -105,11 +118,13 @@ export default {
         transform: `scale(${scale})translateZ(${translateZ}px)`
       }
     },
+    // 滚动列表距离顶部高度
     scrollStyle() {
       return {
         top: `${this.imgHeight}px`
       }
     },
+    // 上拉模糊
     filterStyle() {
       let blur = 0
       const scrollY = this.scrollY
@@ -121,6 +136,15 @@ export default {
       return {
         // backdropFilter CSS模糊滤镜
         backdropFilter: `blur(${blur}px)`
+      }
+    },
+    romdomBtnStyle() {
+      let display = ''
+      if (this.scrollY >= this.maxTranstionY) {
+        display = 'none'
+      }
+      return {
+        display
       }
     }
   },
@@ -134,7 +158,20 @@ export default {
     },
     onScroll(pos) {
       this.scrollY = -pos.y
-    }
+    },
+    selectItem({ song, index }) {
+      this.selectPlay({
+        list: this.songs,
+        index
+      })
+    },
+    randomPlayMusic() {
+      this.randomPlay(this.songs)
+    },
+    ...mapActions([
+      'selectPlay',
+      'randomPlay'
+    ])
   }
 
 }
