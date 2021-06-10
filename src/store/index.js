@@ -17,7 +17,7 @@ export default createStore({
   },
   getters: {
     currentSong (state) {
-      return state.playList[state.currentIndex]
+      return state.playList[state.currentIndex] || {}
     }
   },
   mutations: {
