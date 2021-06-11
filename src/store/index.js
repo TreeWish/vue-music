@@ -1,10 +1,7 @@
 import { createStore, createLogger } from 'vuex'
 import { shuffle } from '@/assets/js/utils'
-const PLAY_MODE = {
-  sequence: 0,
-  loop: 1,
-  random: 2
-}
+import { PLAY_MODE } from '@/assets/js/constant'
+
 const debug = process.env.NODE_ENV !== 'production'
 export default createStore({
   state: {
@@ -56,6 +53,19 @@ export default createStore({
       commit('setCurrentIndex', 0)
       commit('setFullScreen', true)
       commit('setPlayList', shuffle(list))
+    },
+    changeMode({ commit, state, getters }, mode) {
+      const id = getters.currentSong.id
+      if (mode === PLAY_MODE.random) {
+        commit('setPlayList', shuffle(state.sequenceList))
+      } else if (mode === PLAY_MODE.loop) {
+        commit('setPlayList', [getters.currentSong])
+      } else {
+        commit('setPlayList', state.sequenceList)
+      }
+      const index = state.playList.findIndex(song => song.id === id)
+      commit('setCurrentIndex', index)
+      commit('setPlayMode', mode)
     }
   },
   strict: debug,

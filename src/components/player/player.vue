@@ -14,7 +14,7 @@
       <div class="bottom">
         <div class="operators">
           <div class="icon i-left">
-            <i class="icon-sequence"></i>
+            <i :class="modeIcon" @click="changeMode"></i>
           </div>
           <div class="icon i-left" :class="disabledCls">
             <i class="icon-prev" @click="prev"></i>
@@ -26,7 +26,7 @@
             <i class="icon-next" @click="next"></i>
           </div>
            <div class="icon icon-right">
-            <i class="icon-not-favorite"></i>
+            <i :class="favoriteIcon" @click="toggleFavorite"></i>
           </div>
         </div>
       </div>
@@ -43,6 +43,9 @@
 <script>
 import { useStore } from 'vuex'
 import { ref, computed, watch } from 'vue'
+import { useMode } from './useMode'
+import { useFavorite } from './useFavorite'
+
 export default {
   setup() {
     const store = useStore()
@@ -145,6 +148,9 @@ export default {
     function error() {
       songReady.value = true
     }
+    const { modeIcon, changeMode } = useMode()
+    const { favoriteIcon, toggleFavorite } = useFavorite()
+
     return {
       audioRef,
       currentSong,
@@ -159,7 +165,11 @@ export default {
       songReady,
       disabledCls,
       ready,
-      error
+      error,
+      modeIcon,
+      changeMode,
+      favoriteIcon,
+      toggleFavorite
     }
   }
 }
@@ -239,6 +249,9 @@ export default {
               color: $color-theme-d;
               // 禁用鼠标点击事件
               // pointer-events: none;
+            }
+            .icon-favorite {
+              color: $color-sub_theme;
             }
           }
           .i-center {
