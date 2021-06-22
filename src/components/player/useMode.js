@@ -2,7 +2,7 @@ import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { PLAY_MODE } from '@/assets/js/constant'
 
-export function useMode() {
+export default function useMode() {
   const store = useStore()
   const playMode = computed(() => store.state.playMode)
 

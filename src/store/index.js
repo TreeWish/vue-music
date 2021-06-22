@@ -1,6 +1,7 @@
 import { createStore, createLogger } from 'vuex'
 import { shuffle } from '@/assets/js/utils'
-import { PLAY_MODE } from '@/assets/js/constant'
+import { PLAY_MODE, FAVORITE_KEY } from '@/assets/js/constant'
+import { load } from '@/assets/js/array-store'
 
 const debug = process.env.NODE_ENV !== 'production'
 export default createStore({
@@ -10,7 +11,8 @@ export default createStore({
     playing: false,
     playMode: PLAY_MODE.sequence,
     currentIndex: 0,
-    fullScreen: false
+    fullScreen: false,
+    favoriteList: load(FAVORITE_KEY)
   },
   getters: {
     currentSong (state) {
@@ -35,6 +37,9 @@ export default createStore({
     },
     setFullScreen(state, fullScreen) {
       state.fullScreen = fullScreen
+    },
+    setFavoriteList(state, list) {
+      state.favoriteList = list
     }
   },
   actions: {

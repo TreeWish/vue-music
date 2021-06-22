@@ -15,3 +15,10 @@ function swap(arr, i, j) {
   arr[i] = arr[j]
   arr[j] = temp
 }
+
+export function formatTime(time) {
+  time = ~~time
+  const minute = ((time / 60 | 0) + '').padStart(2, '0')
+  const second = (time % 60 + '').padStart(2, '0')
+  return `${minute}:${second}`
+}
