@@ -78,6 +78,7 @@ import { ref, computed, watch } from 'vue';
 import useMode from './useMode';
 import useFavorite from './useFavorite';
 import useCd from '@/components/player/useCd';
+import useLyric from '@/components/player/useLyric';
 import ProgressBar from './progress-bar.vue';
 import { formatTime } from '@/assets/js/utils';
 import { PLAY_MODE } from '@/assets/js/constant';
@@ -219,6 +220,7 @@ export default {
     const { modeIcon, changeMode } = useMode();
     const { getFavoriteIcon, toggleFavorite } = useFavorite();
     const { cdCls, cdRef, cdImageRef } = useCd();
+    useLyric()
 
     return {
       // player

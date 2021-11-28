@@ -40,6 +40,14 @@ export default createStore({
     },
     setFavoriteList(state, list) {
       state.favoriteList = list
+    },
+    addSongLyric(state, { song, lyric }) {
+      state.sequenceList.forEach(item => {
+         if (item.mid === song.mid) {
+           item.lyric = lyric
+           return item
+         }
+      })
     }
   },
   actions: {
