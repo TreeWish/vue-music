@@ -23,7 +23,29 @@
               />
             </div>
           </div>
+          <div class="playing-lyric-wrapper">
+            <div class="playing-lyric">{{ playingLyric }}</div>
+          </div>
         </div>
+        <scroll class="middle-r" ref="lyricScrollRef">
+          <div>
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric" ref="lyricListRef">
+                <p
+                  class="text"
+                  :class="{'current': currentLineNum === index}"
+                  v-for="(line, index) in currentLyric.lines"
+                  :key="line.num"
+                >
+                  {{line.txt}}
+                </p>
+              </div>
+              <div class="pure-music" v-show="pureMusicLyric">
+                <p>{{ pureMusicLyric }}</p>
+              </div>
+            </div>
+          </div>
+        </scroll>
       </div>
       <div class="bottom">
         <div class="progress-wrapper">
@@ -80,11 +102,14 @@ import useFavorite from './useFavorite';
 import useCd from '@/components/player/useCd';
 import useLyric from '@/components/player/useLyric';
 import ProgressBar from './progress-bar.vue';
+import Scroll from '@/components/base/scroll/scroll.vue';
 import { formatTime } from '@/assets/js/utils';
 import { PLAY_MODE } from '@/assets/js/constant';
+
 export default {
   components: {
-    ProgressBar
+    ProgressBar,
+    Scroll
   },
   setup() {
     const store = useStore();
@@ -114,8 +139,10 @@ export default {
       const audioElement = audioRef.value;
       if (newPlay) {
         audioElement.play();
+        playLyric()
       } else {
         audioElement.pause();
+        stopLyric()
       }
     });
 
@@ -129,6 +156,7 @@ export default {
 
       audioElement.src = newSong.url;
       audioElement.play();
+      store.commit('setPlayState', true)
     });
 
     function goBack() {
@@ -190,6 +218,7 @@ export default {
         return;
       }
       songReady.value = true;
+      playLyric()
     }
     function error() {
       songReady.value = true;
@@ -202,12 +231,15 @@ export default {
     function onProgressChanging(progress) {
       progressChanging = true;
       currentTime.value = currentSong.value.duration * progress;
+      playLyric()
+      stopLyric()
     }
     function onProgressChanged(progress) {
       progressChanging = false;
       audioRef.value.currentTime = currentTime.value =
         currentSong.value.duration * progress;
       store.commit('setPlayState', true);
+      playLyric()
     }
     function end() {
       currentTime.value = 0;
@@ -220,7 +252,7 @@ export default {
     const { modeIcon, changeMode } = useMode();
     const { getFavoriteIcon, toggleFavorite } = useFavorite();
     const { cdCls, cdRef, cdImageRef } = useCd();
-    useLyric()
+    const { currentLyric, currentLineNum, playingLyric, pureMusicLyric, lyricScrollRef, lyricListRef, playLyric, stopLyric } = useLyric({ songReady, currentTime })
 
     return {
       // player
@@ -255,7 +287,16 @@ export default {
       // cd
       cdCls,
       cdRef,
-      cdImageRef
+      cdImageRef,
+      // lyric
+      currentLyric,
+      currentLineNum,
+      lyricScrollRef,
+      lyricListRef,
+      playLyric,
+      stopLyric,
+      playingLyric,
+      pureMusicLyric
     };
   }
 };
@@ -328,6 +369,7 @@ export default {
       font-size: 0;
       .middle-l {
         display: inline-block;
+        // display: none;
         vertical-align: top;
         position: relative;
         width: 100%;
@@ -360,7 +402,46 @@ export default {
             }
           }
         }
+        .playing-lyric-wrapper {
+          margin: 30px auto 0 auto;
+          width: 80%;
+          overflow: hidden;
+          text-align: center;
+          .playing-lyric {
+            height: 20px;
+            line-height: 20px;
+            font-size: $font-size-medium;
+            color: $color-text-l;
+          }
+        }
       }
+      .middle-r {
+          display: inline-block;
+          vertical-align: top;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          .lyric-wrapper {
+            width: 80%;
+            margin: 0 auto;
+            overflow: hidden;
+            text-align: center;
+            .text {
+              line-height: 32px;
+              color: $color-text-l;
+              font-size: $font-size-medium;
+              &.current {
+                color: $color-text;
+              }
+            }
+            .pure-music {
+              padding-top: 50%;
+              line-height: 32px;
+              color: $color-text-l;
+              font-size: $font-size-medium;
+            }
+          }
+        }
     }
     .bottom {
       position: absolute;

@@ -79,7 +79,8 @@ export default {
     noResultMessage: {
       type: String,
       default: '抱歉，没有找到结果!'
-    }
+    },
+    rank: Boolean
   },
   data() {
     return {
