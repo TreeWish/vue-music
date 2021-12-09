@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" v-show="playList.length">
     <div class="normal-play" v-show="fullScreen">
       <div class="background">
         <img :src="currentSong.pic" />
@@ -61,6 +61,7 @@
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
           <div class="progress-bar-wrapper">
             <progress-bar
+              ref="progressBarRef"
               :progress="progress"
               @progress-changing="onProgressChanging"
               @progress-changed="onProgressChanged"
@@ -92,6 +93,7 @@
         </div>
       </div>
     </div>
+    <mini-player :progress="progress" :toggle-play="togglePlay"></mini-player>
     <audio
       ref="audioRef"
       @pause="pause"
@@ -105,13 +107,14 @@
 
 <script>
 import { useStore } from 'vuex';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import useMode from './useMode';
 import useFavorite from './useFavorite';
 import useCd from '@/components/player/useCd';
 import useLyric from '@/components/player/useLyric';
 import useMiddleInteractive from '@/components/player/useMiddleInteractive';
 import ProgressBar from './progress-bar.vue';
+import MiniPlayer from './mini-player.vue';
 import Scroll from '@/components/base/scroll/scroll.vue';
 import { formatTime } from '@/assets/js/utils';
 import { PLAY_MODE } from '@/assets/js/constant';
@@ -119,11 +122,13 @@ import { PLAY_MODE } from '@/assets/js/constant';
 export default {
   components: {
     ProgressBar,
-    Scroll
+    Scroll,
+    MiniPlayer
   },
   setup() {
     const store = useStore();
     const audioRef = ref(null);
+    const progressBarRef = ref(null);
     const songReady = ref(false);
     const currentTime = ref(0);
     let progressChanging = false;
@@ -168,6 +173,13 @@ export default {
       audioElement.play();
       store.commit('setPlayState', true);
     });
+
+    watch(fullScreen, async (newFullScreen) => {
+      if (newFullScreen) {
+        await nextTick()
+        progressBarRef.value.setOffet(progress.value)
+      }
+    })
 
     function goBack() {
       store.commit('setFullScreen', false);
@@ -284,6 +296,7 @@ export default {
     return {
       // player
       audioRef,
+      progressBarRef,
       currentSong,
       fullScreen,
       goBack,
@@ -293,6 +306,7 @@ export default {
       prev,
       next,
       loop,
+      playList,
       // mode
       songReady,
       disabledCls,
