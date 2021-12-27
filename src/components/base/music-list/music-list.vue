@@ -51,8 +51,8 @@
 
 <script>
 import SongList from '@/components/base/song-list/song-list'
-import Scroll from '@/components/base/scroll/scroll'
-import { mapActions } from 'vuex'
+import Scroll from '@/components/warp-scroll'
+import { mapActions, mapState } from 'vuex'
 const NAVBAR_HEIGHT = 40
 export default {
   name: 'music-list',
@@ -90,6 +90,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['playList']),
     noResult() {
       return !this.loading && !this.songs.length
     },
@@ -121,8 +122,10 @@ export default {
     },
     // 滚动列表距离顶部高度
     scrollStyle() {
+      const bottom = this.playList.length ? '60px' : '0'
       return {
-        top: `${this.imgHeight}px`
+        top: `${this.imgHeight}px`,
+        bottom
       }
     },
     // 上拉模糊
