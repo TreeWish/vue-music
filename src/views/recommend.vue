@@ -14,6 +14,7 @@
               v-for="item in albums"
               class="item"
               :key="item.id"
+              @click="selectItem(item)"
             >
               <div class="icon" >
                 <img width="60" height="60" v-lazy="item.pic">
@@ -31,6 +32,11 @@
         </div>
       </div>
    </scroll>
+   <router-view v-slot="{ Component }">
+      <transition name="slide" appear>
+        <component :is="Component" :data="selectAlbum" />
+      </transition>
+    </router-view>
   </div>
 </template>
 
@@ -38,6 +44,8 @@
 import { getRecommend } from '@/service/recommend'
 import Slider from '@/components/base/slider/slider.vue'
 import Scroll from '@/components/warp-scroll'
+import storage from 'good-storage'
+import { ALBUM_KEY } from '@/assets/js/constant.js'
 
 export default {
   name: 'recommend',
@@ -49,7 +57,8 @@ export default {
   data() {
     return {
       albums: [],
-      sliders: []
+      sliders: [],
+      selectAlbum: []
     }
   },
   computed: {
@@ -61,6 +70,18 @@ export default {
     const result = await getRecommend()
     this.albums = result.albums
     this.sliders = result.sliders
+  },
+  methods: {
+    selectItem(album) {
+      this.selectAlbum = album
+      this.cacheAlbum(album)
+      this.$router.push({
+        path: `/recommend/${album.id}`
+      })
+    },
+    cacheAlbum(album) {
+      storage.session.set(ALBUM_KEY, album)
+    }
   }
 }
 </script>

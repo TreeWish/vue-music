@@ -30,7 +30,7 @@ export default {
     };
   },
   watch: {
-    process(newVal) {
+    progress(newVal) {
       this.setOffet(newVal)
     }
   },
