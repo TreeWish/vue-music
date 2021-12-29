@@ -1,7 +1,7 @@
 import storage from 'good-storage';
 import { processSongs } from '@/service/song';
 import MusicList from '@/components/base/music-list/music-list';
-export default function createDetailComp(name, key, fetch) {
+export default function createDetailComponent(name, key, fetch) {
   return {
     name,
     components: {

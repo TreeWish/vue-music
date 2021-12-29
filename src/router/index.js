@@ -5,6 +5,7 @@ import Search from '../views/search.vue';
 import topList from '../views/top-list.vue';
 import SingerDetail from '@/views/singer-detail.vue';
 import Album from '@/views/album.vue';
+import TopDetail from '@/views/top-detail.vue';
 const routes = [
   {
     path: '/',
@@ -43,13 +44,15 @@ const routes = [
   {
     path: '/top-list',
     name: 'top-list',
-    component: topList
+    component: topList,
+    children: [
+      {
+        path: ':id',
+        name: 'top-detail',
+        component: TopDetail
+      }
+    ]
   }
-  // {
-  //   path: '/singer/:id',
-  //   name: 'singer-detail',
-  //   component: SingerDetail
-  // }
 ];
 
 const router = createRouter({

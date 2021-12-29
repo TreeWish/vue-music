@@ -80,7 +80,10 @@ export default {
       type: String,
       default: '抱歉，没有找到结果!'
     },
-    rank: Boolean
+    rank: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
