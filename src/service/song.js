@@ -16,7 +16,7 @@ export function processSongs(songs) {
         return song;
       })
       .filter(song => {
-        return song.url.includes('vkey');
+        return song.url && song.url.includes('vkey');
       });
   });
 }

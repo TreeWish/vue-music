@@ -13,6 +13,12 @@ export function remove(key, compare) {
   storage.set(key, list)
   return list
 }
+
+export function clear(key) {
+  storage.remove(key)
+  return []
+}
+
 function insertArray(arr, val, compare) {
   const index = arr.findIndex(compare)
   if (index > -1) {

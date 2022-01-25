@@ -1,6 +1,6 @@
 import { createStore, createLogger } from 'vuex';
 import { shuffle } from '@/assets/js/utils';
-import { PLAY_MODE, FAVORITE_KEY } from '@/assets/js/constant';
+import { PLAY_MODE, FAVORITE_KEY, SEARCH_KET } from '@/assets/js/constant';
 import { load } from '@/assets/js/array-store';
 
 const debug = process.env.NODE_ENV !== 'production';
@@ -12,7 +12,8 @@ export default createStore({
     playMode: PLAY_MODE.sequence,
     currentIndex: 0,
     fullScreen: false,
-    favoriteList: load(FAVORITE_KEY)
+    favoriteList: load(FAVORITE_KEY),
+    searchHistroy: load(SEARCH_KET)
   },
   getters: {
     currentSong(state) {
@@ -48,6 +49,9 @@ export default createStore({
           return item;
         }
       });
+    },
+    setSearchHistory(state, searches) {
+      state.searchHistroy = searches
     }
   },
   actions: {
@@ -111,6 +115,28 @@ export default createStore({
       commit('setPlayList', []);
       commit('setCurrentIndex', 0);
       commit('setPlayState', false);
+    },
+    addSong({ commit, state }, song) {
+      const sequenceList = state.sequenceList.slice();
+      const playList = state.playList.slice();
+
+      const sequenceIndex = findIndex(sequenceList, song);
+      const playIndex = findIndex(playList, song);
+      let currentIndex = state.currentIndex;
+      if (playIndex > -1) {
+        currentIndex = playIndex;
+      } else {
+        playList.push(song);
+        currentIndex = playList.length - 1;
+      }
+      if (sequenceIndex === -1) {
+        sequenceList.push(song);
+      }
+      commit('setSequenceList', sequenceList);
+      commit('setPlayList', playList);
+      commit('setCurrentIndex', currentIndex);
+      commit('setPlayState', true);
+      commit('setFullScreen', true);
     }
   },
   strict: debug,

@@ -26,7 +26,7 @@ const routes = [
   },
   {
     path: '/singer',
-    name: 'Singer',
+    name: 'singer',
     component: Singer,
     children: [
       {
@@ -39,7 +39,14 @@ const routes = [
   {
     path: '/search',
     name: 'search',
-    component: Search
+    component: Search,
+    children: [
+      {
+        path: ':id',
+        name: 'singer-detail',
+        component: SingerDetail
+      }
+    ]
   },
   {
     path: '/top-list',
